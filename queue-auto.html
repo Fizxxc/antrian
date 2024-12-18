@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Antrian Otomatis - Monitor 1</title>
+    <style>
+        /* Gaya yang sama seperti sebelumnya */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(to right, #00c6ff, #0072ff);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            color: white;
+            text-align: center;
+        }
+
+        .container {
+            background-color: rgba(0, 0, 0, 0.7);
+            border-radius: 10px;
+            padding: 40px;
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+            max-width: 500px;
+            width: 100%;
+        }
+
+        h1 {
+            font-size: 3em;
+            margin-bottom: 20px;
+        }
+
+        .queue-container {
+            font-size: 8em;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #ffeb3b;
+            text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.5);
+        }
+
+        button {
+            padding: 15px 30px;
+            font-size: 1.5em;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        @keyframes fadeIn {
+            0% {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Nomor Antrian Saat Ini</h1>
+
+        <div class="queue-container" id="queueNumber">
+            <!-- Nomor antrian otomatis akan ditampilkan di sini -->
+            0
+        </div>
+
+        <a href="queue-admin.html" target="_blank"></a>
+
+        <div class="footer">
+            <p>© 2024 Fizzx. All rights reserved.
+                This application is protected under copyright law.</p>
+        </div>
+    </div>
+
+    <script>
+        // Menggunakan localStorage untuk menyimpan antrian
+        let queue = JSON.parse(localStorage.getItem('queue')) || [];
+        let queueCounter = queue.length > 0 ? parseInt(queue[queue.length - 1]) + 1 : 1;
+
+        // Fungsi untuk menampilkan nomor antrian
+        function displayQueue() {
+            const queueNumberElement = document.getElementById('queueNumber');
+            if (queue.length > 0) {
+                queueNumberElement.textContent = `Antrian ${queue[0]}`;
+            } else {
+                queueNumberElement.textContent = "Tidak ada antrian.";
+            }
+        }
+
+        // Fungsi untuk menambahkan antrian otomatis
+        function addQueueAutomatically() {
+            queue.push(queueCounter);
+            localStorage.setItem('queue', JSON.stringify(queue)); // Simpan antrian ke localStorage
+            queueCounter++; // Menambah counter untuk antrian berikutnya
+            displayQueue();
+        }
+
+        // Menambahkan antrian otomatis setiap 5 detik
+        setInterval(() => {
+            addQueueAutomatically();
+        }, 5000); // Menambahkan antrian baru setiap 5 detik
+
+        // Menampilkan antrian saat halaman dimuat
+        window.onload = () => {
+            displayQueue();
+        };
+
+        // Mengupdate tampilan jika ada perubahan dari halaman lain
+        window.addEventListener('storage', (event) => {
+            if (event.key === 'queue') {
+                queue = JSON.parse(localStorage.getItem('queue')) || [];
+                displayQueue();
+            }
+        });
+    </script>
+</body>
+</html>
